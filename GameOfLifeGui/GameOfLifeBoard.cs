@@ -23,13 +23,23 @@ namespace GameOfLifeGui
         public void Randomize();
         
     }
+
     interface IGameOfLifeRules
     {
+        /*
+         * Interface for Game Of Life rules
+         *
+         * Allows different rulesets to be swapped in.
+         */
         bool CalcNextState(IGameOfLifeCell cell);
     }
 
     class ConwaysGameOfLifeRules : IGameOfLifeRules
     {
+        /*
+         * Implement the canonical ruleset:
+         * Conway's Game Of Life.
+         */
         public bool CalcNextState(IGameOfLifeCell cell)
         {
             var count = cell.CountNeighbors();
@@ -113,21 +123,35 @@ namespace GameOfLifeGui
 
         public int width
         {
+            /*
+             * Get board width
+             */
             get { return cells.Count; }
         }
 
         public int height
         {
+            /*
+             * Get board height
+             */
+            get { return cells.Count; }
             get { return cells[0].Count; }
         }
+
         public bool getState(int x, int y)
         {
+            /*
+             * Get single cell's state from the board
+             */
             Debug.Assert(x >= 0 && y >= 0 && x < width && y < height);
             return cells[x][y].Alive;
         }
 
         public void setState(int x, int y, bool state)
         {
+            /*
+             * Set single cell's state from the board
+             */
             Debug.Assert(x >= 0 && y >= 0 && x < width && y < height);
             cells[x][y].Alive = state;
         }
@@ -164,6 +188,9 @@ namespace GameOfLifeGui
 
         public void TimeStep(bool verbose = false)
         {
+            /*
+             * Apply the rules to the game state, then update to next state.
+             */
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -182,6 +209,9 @@ namespace GameOfLifeGui
 
         public void Randomize()
         {
+            /*
+             * Randomize the board's state
+             */
             for (int x = 0; x < width; x++)
             {
                 for (int y=0; y < height; y++)
@@ -200,13 +230,13 @@ namespace GameOfLifeGui
 
         //Are we "alive"?
         public bool Alive { get; set; }
-            /*
-            * Next "alive" state.
-            * 
-            * Since next state relies on current state of neighbors,
-            * we must not change our Alive state until all neighbors have
-            * calculated their own NextAlive state.
-            */
+        /*
+        * Next "alive" state.
+        * 
+        * Since next state relies on current state of neighbors,
+        * we must not change our Alive state until all neighbors have
+        * calculated their own NextAlive state.
+        */
         public bool NextState { get; set; }
 
         public GameOfLifeCell()
@@ -218,11 +248,20 @@ namespace GameOfLifeGui
 
         public void AddNeighbor(IGameOfLifeCell neighbor)
         {
+            /*
+             * Game of Life cells need to know who their neighbors are.
+             * Use this function to inform the cell of that information.
+             */
             Neighbors.Add(neighbor);
         }
 
         public int CountNeighbors()
         {
+            /*
+             * Game of Life cells need to know how many neighbors are alive.
+             *
+             * This function will determine that.
+             */
             int count = 0;
             for (int idx = 0; idx < Neighbors.Count; idx++)
             {
@@ -236,16 +275,29 @@ namespace GameOfLifeGui
 
         public virtual void ApplyStep()
         {
+            /*
+             * After having calculated the next state for all cells, this
+             * will be called to update the cell to the next state.
+             */
             Alive = NextState;
         }
 
         public void ApplyRules(IGameOfLifeRules rules)
         {
+            /*
+             * Apply rules. The Rules will take a reference to our cell
+             * and tell us if we're still alive.
+             */
             NextState = rules.CalcNextState(this);
         }
 
         public void Randomize()
         {
+            /*
+             * Use the shared random object to randomize this cell.
+             *
+             * Immediately apply the change.
+             */
             NextState = 1==rnd.Next(2);
             ApplyStep();
         }

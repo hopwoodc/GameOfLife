@@ -14,6 +14,11 @@ namespace GameOfLifeGui
 
     class GameOfLifeCellRect : GameOfLifeCell
     {
+        /*
+         * Override the GameOfLifeCell ApplyStep so that we can only update
+         * the changed squares in the grid. Keep a reference to the rectangle
+         * that corresponds to this cell
+         */
         public Rectangle? rect;
         override public void ApplyStep()
         {
@@ -31,6 +36,7 @@ namespace GameOfLifeGui
         //Temporary size variable, calculate it properly later
         private int size = 10;
         private int space = 2;
+
         public GameOfLifeCanvas(int width, int height)
         {
             board = new GameOfLifeBoard<GameOfLifeCellRect>(width, height, new ConwaysGameOfLifeRules());
@@ -51,6 +57,9 @@ namespace GameOfLifeGui
             /*
              * Heavily borrowed from this:
              * https://www.ictdemy.com/csharp/wpf/drawing-on-canvas-in-csharp-net-wpf/
+             *
+             * Do the initial instantiation of rectangles on the canvas.
+             * Add the rectangle references to GameOfLifeCellRect.
              */
             for (int y = 0; y < board.height; y++)
             {
