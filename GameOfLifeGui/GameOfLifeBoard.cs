@@ -134,7 +134,6 @@ namespace GameOfLifeGui
             /*
              * Get board height
              */
-            get { return cells.Count; }
             get { return cells[0].Count; }
         }
 
